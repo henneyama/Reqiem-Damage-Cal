@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6凸レイクエイム ダメージ計算シミュレーター</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #1c1c1f;
+            --accent-color: #9b5de5;
+            --text-color: #e0e0e6;
+            --text-muted: #a0a0ab;
+            --border-color: #2d2d33;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .card-title {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            flex: 1;
+        }
+        input {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 4px;
+            width: 120px;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+        input:focus {
+            border-color: var(--accent-color);
+            outline: none;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .result-item:last-child { border-bottom: none; }
+        .result-label {
+            font-weight: bold;
+        }
+        .result-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00b4d8;
+        }
+        .result-value.nightmare {
+            color: #f72585;
+        }
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .btn:hover { background-color: #8338ec; }
+        .explanation {
+            margin-top: 30px;
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .explanation h3 { margin-top: 0; color: var(--accent-color); }
+        .explanation ul { padding-left: 20px; margin: 10px 0; }
+        .explanation li { margin-bottom: 8px; font-size: 0.85rem; color: var(--text-muted); }
+        .formula-box {
+            background-color: var(--bg-color);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            color: #a2d2ff;
+            margin: 5px 0 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>レイクエイム（安魂曲）ダメージシミュレーター</h1>
+    
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">🔍 ステータス・条件入力</div>
+            
+            <div class="form-group">
+                <label>基礎攻撃力 (キャラ+武器)</label>
+                <input type="number" id="baseAtk" value="1200">
+            </div>
+            <div class="form-group">
+                <label>攻撃力％ボーナス (%)</label>
+                <input type="number" id="atkPct" value="85">
+            </div>
+            <div class="form-group">
+                <label>固定攻撃力 (実数)</label>
+                <input type="number" id="flatAtk" value="350">
+            </div>
+            <div class="form-group">
+                <label>闇属性ダメージバフ (%)</label>
+                <input type="number" id="darkBuff" value="46.6">
+            </div>
+            <div class="form-group">
+                <label>自身の会心率 (%) ※本体用</label>
+                <input type="number" id="critRate" value="65">
+            </div>
+            <div class="form-group">
+                <label>自身の会心ダメージ (%) ※本体用</label>
+                <input type="number" id="critDmg" value="180">
+            </div>
+            <div class="form-group">
+                <label>自分のレベル</label>
+                <input type="number" id="myLv" value="80">
+            </div>
+            <div class="form-group">
+                <label>敵のレベル</label>
+                <input type="number" id="enemyLv" value="90">
+            </div>
+            <div class="form-group">
+                <label>6凸効果：敵の防御無視 (%)</label>
+                <input type="number" id="defIgnore" value="45">
+            </div>
+            
+            <div class="card-title" style="margin-top:20px; margin-bottom:15px;">⚔️ 各スキル倍率設定</div>
+            <div class="form-group">
+                <label>通常攻撃 倍率 (%)</label>
+                <input type="number" id="skillNormal" value="85">
+            </div>
+            <div class="form-group">
+                <label>バレールスキル 倍率 (%)</label>
+                <input type="number" id="skillBarel" value="240">
+            </div>
+            <div class="form-group">
+                <label>Exスキル 倍率 (%)</label>
+                <input type="number" id="skillEx" value="480">
+            </div>
+            <div class="form-group">
+                <label>悪夢（ナイトメア）攻撃 倍率 (%)</label>
+                <input type="number" id="skillNightmare" value="320">
+            </div>
+
+            <button class="btn" onclick="calculateDamage()">ダメージを計算する</button>
+        </div>
+
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div class="card-title">📊 計算結果 (期待値DPS)</div>
+                
+                <div class="result-item">
+                    <span class="result-label">最終ステータス攻撃力:</span>
+                    <span id="resTotalAtk" style="font-weight: bold;">-</span>
+                </div>
+                <div class="result-item">
+                    <span
