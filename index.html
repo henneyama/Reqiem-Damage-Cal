@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>【NTE】6凸レクイエム ダメージ計算シミュレーター（GameWith完全対応版）</title>
+    <title>【NTE】6凸レクイエム ダメージ計算シミュレーター</title>
     <style>
         :root {
             --bg-color: #0f0f11;
@@ -140,8 +140,8 @@
             flex-wrap: wrap;
             gap: 4px;
         }
-        .math-variable { font-style: italic; }
-        .math-sub { font-size: 0.75rem; vertical-align: sub; }
+        .math-variable { font-style: italic; font-weight: bold; }
+        .math-sub { font-size: 0.75rem; vertical-align: sub; font-weight: normal; }
         .math-fraction {
             display: inline-flex;
             flex-direction: column;
@@ -156,25 +156,30 @@
         .math-denominator {
             padding-top: 2px;
         }
-
-        .explanation {
-            margin-top: 25px;
-            background-color: var(--card-bg);
-            border-left: 4px solid var(--accent-color);
-            padding: 20px;
-            border-radius: 0 8px 8px 0;
+        .variable-definition-box {
+            font-size: 0.8rem; 
+            color: var(--text-muted); 
+            line-height: 1.6; 
+            background: var(--bg-color); 
+            padding: 12px; 
+            border-radius: 6px; 
+            border: 1px solid var(--border-color); 
+            margin-top: 15px;
         }
-        .explanation h3 { margin-top: 0; color: var(--accent-color); font-size: 1.1rem; }
-        .explanation p { font-size: 0.85rem; margin: 5px 0 10px 0; }
-        .explanation ul { padding-left: 20px; margin: 5px 0; font-size: 0.85rem; color: var(--text-muted); }
-        .explanation li { margin-bottom: 5px; }
+        .variable-definition-box ul {
+            margin: 5px 0 0 0;
+            padding-left: 18px;
+        }
+        .variable-definition-box li {
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>レクイエム（安魂曲）ダメージシミュレーター</h1>
-    <div class="subtitle">GameWith攻略データ完全対応版（フレーバー変奏＆悪夢清算バースト両対応）</div>
+    <div class="subtitle">フレーバー変奏＆悪夢清算バースト両対応（6凸前提）</div>
     
     <div class="grid">
         <div class="card">
@@ -228,7 +233,7 @@
                 <input type="number" id="defIgnore" value="45">
             </div>
             
-            <div class="card-title" style="margin-top:20px; margin-bottom:12px;">⚔️ GameWith公式スキル倍率設定</div>
+            <div class="card-title" style="margin-top:20px; margin-bottom:12px;">⚔️ スキル倍率 ＆ 悪夢スタック設定</div>
             <div class="form-group">
                 <label>「フレーバー変奏」1〜4段目 単発倍率 (%)</label>
                 <input type="number" id="skillNormal" value="75">
@@ -267,7 +272,7 @@
 
         <div class="card" style="display: flex; flex-direction: column; justify-content: flex-start;">
             <div>
-                <div class="card-title">📊 GameWith準拠 シミュレーション結果</div>
+                <div class="card-title">📊 シミュレーション結果 (期待値)</div>
                 
                 <div class="result-item">
                     <span class="result-label">最終ステータス攻撃力:</span>
@@ -304,7 +309,7 @@
                 </div>
             </div>
 
-            <div class="card-title" style="margin-top: 10px; font-size: 1rem;">📐 通常5段目・悪夢清算 数学的計算法程式</div>
+            <div class="card-title" style="margin-top: 15px; font-size: 1rem;">📐 暫定計算式詳細</div>
             
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">【1】 悪夢1スタックの基本ダメージ式 (<span class="math-variable">D<span class="math-sub">nm</span></span>)</div>
             <div class="math-block">
@@ -313,7 +318,7 @@
                 &times; <span class="math-variable">S<span class="math-sub">nm</span></span>
                 &times; (1 + <span class="math-variable">B<span class="math-sub">dark</span></span>)
                 &times; (1 + <span class="math-variable">G<span class="math-sub">gear</span></span>)
-                &times; [ 1 + (0.50 &times; <span class="math-sub">total</span><span class="math-variable">CD</span>) ]
+                &times; [ 1 + (0.50 &times; <span class="math-variable">totalCD</span>) ]
                 &times; 
                 <div class="math-fraction">
                     <span class="math-numerator"><span class="math-variable">Lv<span class="math-sub">ply</span></span> + 100</span>
@@ -326,18 +331,22 @@
                 <span class="math-variable">D<span class="math-sub">burst</span></span> = 
                 <span class="math-variable">D<span class="math-sub">normal5</span></span> + ( <span class="math-variable">D<span class="math-sub">nm</span></span> &times; <span class="math-variable">Stack</span> &times; <span class="math-variable">P<span class="math-sub">clear</span></span> &times; 2.0 )
             </div>
-        </div>
-    </div>
 
-    <div class="explanation">
-        <h3>📜 GameWithデータ連携用パラメータ定義</h3>
-        <p>提供されたGameWithデータ（URL: https://gamewith.jp/nte/559773）をベースにした各種用語解説です。</p>
-        <ul>
-            <li><strong>フレーバー変奏 :</strong> レクイエムの通常攻撃システム。近接・遠距離モードでコンボを繋ぎ、5段目で悪夢を清算バーストします。</li>
-            <li><strong>バイレール「悪魔のプレゼント」:</strong> コピーした敵の技術を保存して撃ち出す高火力スキル。</li>
-            <li><strong>EXレール終結 :</strong> モード切り替えによって攻撃方法（近接/遠距離）と倍率が変化する必殺技。</li>
-            <li><strong>2.0（独立最終乗算）:</strong> 6凸効果「悪夢ダメージ+100%」を想定し、悪夢DoTおよび清算バーストの最終値に掛け算される完凸専用の乗算レバー。</li>
-        </ul>
+            <div class="variable-definition-box">
+                <strong>📋 各代数の定義解説:</strong>
+                <ul>
+                    <li><strong>D<sub>nm</sub> / D<sub>burst</sub> / D<sub>normal5</sub> :</strong> 悪夢単発ダメージ / 総バーストダメージ / フレーバー変奏5段目本体ダメージ</li>
+                    <li><strong>A<sub>base</sub> / P<sub>atk</sub> / A<sub>flat</sub> :</strong> 基礎攻撃力 / 攻撃力％ / 固定攻撃力加算（実数）</li>
+                    <li><strong>S<sub>nm</sub> :</strong> 「悪夢」デバフの1スタック毎秒倍率％</li>
+                    <li><strong>B<sub>dark</sub> :</strong> 闇属性（闇異能）ダメージバフ％</li>
+                    <li><strong>G<sub>gear</sub> :</strong> ギア「ディアボロス」による耐性無視％（12% = 0.12 / 24% = 0.24）</li>
+                    <li><strong>totalCD :</strong> 悪夢攻撃の固定基礎会心ダメ50% ＋ ラスト・ローズ累積会心ダメバフ%の合算</li>
+                    <li><strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 自分のレベル / 敵のレベル / 6凸による敵の防御力無視％</li>
+                    <li><strong>Stack / P<sub>clear</sub> :</strong> 悪夢の消費スタック数 / 5段目悪夢清算（バースト）倍率</li>
+                    <li><strong>2.0 :</strong> 6凸効果「悪夢ダメージ＋100%」に相当する独立最終乗算バフ倍率</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -398,7 +407,7 @@ function calculateDamage() {
     const dmgNightmare1Stack = totalAtk * (sNightmare / 100) * darkMod * gearMod * nightmareCritMod * defMitigation;
     const totalNightmareDoT = dmgNightmare1Stack * nightmareStacks;
 
-    // ★ フレーバー変奏5段目・悪夢清算（総バーストダメージ）
+    // フレーバー変奏5段目・悪夢清算（総バーストダメージ）
     const dmgClearBurst = (dmgNightmare1Stack * 2.0) * nightmareStacks * nClearPop;
     const totalBurstCombo = dmgNormal5 + dmgClearBurst;
 
