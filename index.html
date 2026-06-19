@@ -7,7 +7,7 @@
     <style>
         :root {
             --bg-color: #0f0f11;
-            --card-bg: rgba(23, 23, 26, 0.88); /* 背景を魅せるためにカードをほんのり透過 */
+            --card-bg: rgba(23, 23, 26, 0.88); 
             --accent-color: #bb86fc;
             --text-color: #e3e3e6;
             --text-muted: #94949c;
@@ -17,12 +17,11 @@
         }
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            /* 提供された画像ファイルを背景に指定、文字を読みやすくするため暗めのフィルターを乗算 */
             background-image: linear-gradient(rgba(15, 15, 17, 0.85), rgba(15, 15, 17, 0.85)), url('HHAV3x9bwAYYfNt.jpg');
             background-size: cover;
             background-position: center top;
             background-repeat: no-repeat;
-            background-attachment: fixed; /* スクロールしても背景を固定 */
+            background-attachment: fixed; 
             color: var(--text-color);
             line-height: 1.6;
             margin: 0;
@@ -79,7 +78,7 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-            backdrop-filter: blur(6px); /* カードの背景をぼかして高級感を演出 */
+            backdrop-filter: blur(6px); 
         }
         .card-title {
             font-size: 1.1rem;
@@ -383,7 +382,6 @@
 </div>
 
 <script>
-// 多言語翻訳データ辞書
 const i18nData = {
     ja: {
         title: "レクイエム（安魂曲）ダメージシミュレーター",
@@ -435,4 +433,261 @@ const i18nData = {
         tip_flatAtk: "ディスクのメインやサブステによる固定値の攻撃力。上に最終攻撃力を直接入力した場合は 0 にしてください。",
         tip_darkBuff: "ステータス詳細画面の「闇異能ダメージ強化(77.50%)」に「汎用ダメージ強化(21.00%)」を足し合わせた合計値を入力します。",
         tip_critRate: "ステータス画面の「クリティカル率」を入力します（悪夢デバフ以外の本体攻撃の会心率に影響します）。",
-        tip_
+        tip_critDmg: "ステータス画面の「クリティカルダメージ」を入力します（悪夢デバフ以外の本体攻撃の会心ダメージに影響します）。",
+        tip_roseCritDmg: "専用武器「ラスト・ローズ」の効果で、悪夢発生時またはバイレール発動時に累積する会心ダメージバフの合計最大％を入力します。",
+        tip_diabolosIgnore: "ギア『ディアボロス』4セットの装備状態に合わせて選択してください。敵の属性耐性を無視して最終ダメージを増幅させます。",
+        tip_myLv: "現在のレクイエムのキャラクターレベルを入力します。敵とのレベル差による防御減衰計算に使用します。",
+        tip_enemyLv: "想定する敵エネミー（ターゲットとなるボス等）のレベルを入力します。",
+        tip_defIgnore: "完凸効果や追加バフによる「敵の防御力無視」の合計％を入力します。",
+        tip_skillNormal: "ゲーム内のスキル詳細画面に記載されている、通常攻撃「フレーバー変奏」の1〜4段目のヒット倍率％を入力します。",
+        tip_skillNormal5: "通常攻撃コンボの締めくくりである5段目の本体ヒット倍率％を入力します。これが当たると同時に悪夢の清算バーストが発動します。",
+        tip_skillBarel: "スキル詳細に記載されている、バイレールスキル「悪魔のプレゼント（コピー技術の撃ち出し）」の倍率％を入力します。",
+        tip_skillExMelee: "近接戦闘モード時に発動する、必殺技「EXレール終結」の合計ダメージ倍率％を入力します。",
+        tip_skillExRange: "遠距離ガンナーモード時に発動する、必殺技「EXレール終結」の合計ダメージ倍率％を入力します。",
+        tip_skillNightmare: "敵に付与される固有デバフ「悪夢」の、1スタックあたりが毎秒与える闇異能継続ダメージの倍率％を入力します。",
+        tip_nightmareStacks: "通常5段目を当てて清算バーストを起こす際、敵から一気に消費・回収する悪夢のスタック数（最大10）を指定します。",
+        tip_nightmareClearPop: "凸効果やスキル仕様で規定されている、5段目ヒット時に悪夢スタックを大爆発させる際の乗算倍率（〇秒分のDoT一括吐き出しなど）を入力します。",
+
+        defs: [
+            "<strong>D<sub>nm</sub> / D<sub>burst</sub> / D<sub>normal5</sub> :</strong> 悪夢単発ダメージ / 総バーストダメージ / フレーバー変奏5段目本体ダメージ",
+            "<strong>A<sub>base</sub> / P<sub>atk</sub> / A<sub>flat</sub> :</strong> 基礎攻撃力 / 攻撃力％ / 固定攻撃力加算（実数）",
+            "<strong>S<sub>nm</sub> :</strong> 「悪夢」デバフの1スタック毎秒倍率％",
+            "<strong>B<sub>dark</sub> :</strong> 闇属性（闇異能）ダメージバフ％",
+            "<strong>G<sub>gear</sub> :</strong> ギア「ディアボロス」による耐性無視％（12% = 0.12 / 24% = 0.24）",
+            "<strong>totalCD :</strong> 悪夢攻撃の固定基礎会心ダメ50% ＋ ラスト・ローズ累積会心ダメバフ%の合算",
+            "<strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 自分のレベル / 敵のレベル / 6凸による敵の防御力無視％",
+            "<strong>Stack / P<sub>clear</sub> :</strong> 悪夢の消費スタック数 / 5段目悪夢清算（バースト）倍率",
+            "<strong>2.0 :</strong> 6凸効果「悪夢ダメージ＋100%」に相当する独立最終乗算バフ倍率"
+        ]
+    },
+    zh: {
+        title: "安魂曲（Requiem）伤害计算器",
+        subtitle: "风味变奏 & 噩梦清算爆发双对应（默认为6魂）",
+        card_status: "🔍 角色・武器・驱动 属性状态",
+        card_skill: "⚔️ 技能倍率 & 噩梦层数设定",
+        card_result: "📊 模拟结果 (期待值)",
+        formula_title: "📐 暂定计算公式详情",
+        formula_1: "【1】 噩梦1层的基本伤害公式 (Dnm)",
+        formula_2: "【2】 5段命中时的总爆发伤害公式 (Dburst)",
+        def_title: "📋 各代数定义解说:",
+        btn_calc: "计算伤害",
+        
+        baseAtk: "基础攻击力 (安魂曲面板 + 武器)",
+        atkPct: "攻击力%加成合计 (%)",
+        flatAtk: "固定攻击力加成 (实数合计)",
+        darkBuff: "暗属性（暗异能）伤害加成 (%)",
+        critRate: "自身暴击率 (%) ※仅限本体攻击",
+        critDmg: "自身暴击伤害 (%) ※仅限本体攻击",
+        roseCritDmg: "🌹 「最后的玫瑰」累积暴伤加成 (%)",
+        diabolosIgnore: "⚙️ 驱动「迪亚波罗斯」抗性忽视",
+        myLv: "出战角色等级 (自身)",
+        enemyLv: "敌方（怪物）等级",
+        defIgnore: "6魂效果：忽视敌方防御 (%)",
+        skillNormal: "「风味变奏」1〜4段 单发倍率 (%)",
+        skillNormal5: "💥 「风味变奏」5段（清算触发器）(%)",
+        skillBarel: "拜轨技能「魔鬼的礼物」倍率 (%)",
+        skillExMelee: "🔮 EX轨终结【近战模式】倍率 (%)",
+        skillExRange: "🔮 EX轨终结【远距离模式】倍率 (%)",
+        skillNightmare: "「噩梦」持续伤害 1层每秒倍率 (%)",
+        nightmareStacks: "💥 5段命中时消耗的噩梦层数",
+        nightmareClearPop: "💥 5段噩梦清算（爆发）倍率 (倍)",
+        
+        diabolos_12: "4件套效果 (12%忽视)",
+        diabolos_24: "特定反应时 (24%忽视)",
+        diabolos_0: "无 (0%)",
+
+        res_totalAtk: "最终面板攻击力:",
+        res_normal: "风味变奏 1〜4段 (单发):",
+        res_normal5: "风味变奏 5段 (仅限本体物理):",
+        res_barel: "拜轨技能「魔鬼的礼物」:",
+        res_exmelee: "EX轨终结【近战模式】:",
+        res_exrange: "EX轨终结【远距离模式】:",
+        res_nightmare: "噩梦持续伤害 (指定层数每秒合计):",
+        res_burst: "🔥 风味变奏5段・噩梦清算总爆发:",
+
+        tip_baseAtk: "请直接输入属性界面显示的“最终攻击力”。在这种情况下，下方的两个项目（%和固定值）请填 0。",
+        tip_atkPct: "由驱动（圣遗物）副属性等提供的攻击力%总和。如果在上方直接输入了最终攻击力，请填 0。",
+        tip_flatAtk: "由驱动的主属性或副属性提供的固定攻击力数值。如果在上方直接输入了最终攻击力，请填 0。",
+        tip_darkBuff: "请输入将面板详细属性中的“暗异能伤害强化(77.50%)”与“通用伤害强化(21.00%)”相加后的总值。",
+        tip_critRate: "请输入面板上的“暴击率”（影响除噩梦持续伤害以外的本体攻击暴击概率）。",
+        tip_critDmg: "请输入面板上的“暴击伤害”（影响除噩梦持续伤害以外的本体攻击暴击伤害）。",
+        tip_roseCritDmg: "请输入专属武器“最后的玫瑰”效果在触发噩梦或释放拜轨技能时能够累积的最大暴击伤害总百分比。",
+        tip_diabolosIgnore: "请根据驱动『迪亚波罗斯』4件套的装备状态进行选择。将无视敌方属性抗性并直接放大最终伤害。",
+        tip_myLv: "请输入当前安魂曲的角色等级。用于计算与敌方的等级差造成的防御减算。",
+        tip_enemyLv: "请输入设定的敌方目标（如测试首领等）的等级。",
+        tip_defIgnore: "请输入满魂效果或其他附加增益提供的“无视敌方防御力”的总百分比。",
+        tip_skillNormal: "请输入游戏内技能详情界面中记载的普通攻击“风味变奏”1〜4段的每段命中倍率%。",
+        tip_skillNormal5: "请输入普通攻击连段终结技第5段的本体命中倍率%。此攻击命中的同时会触发噩梦的清算爆发。",
+        tip_skillBarel: "请输入技能详情中记载的拜轨技能“魔鬼的礼物（复制技能释放）”的伤害倍率%。",
+        tip_skillExMelee: "请输入近战模式下释放的大招“EX轨终结”的总伤害倍率%。",
+        tip_skillExRange: "请输入远距离模式下释放的大招“EX轨终结”的总伤害倍率%。",
+        tip_skillNightmare: "请输入赋予敌方的固有负面状态“噩梦”每层每秒造成的暗异能持续伤害倍率%。",
+        tip_nightmareStacks: "请指定在普通5段命中触发清算爆发时，从敌方身上一次性消耗和回收的噩梦层数（最大10层）。",
+        tip_nightmareClearPop: "请输入由魂之座（凸）效果或技能机制规定的，在5段命中时使噩梦层数发生大爆炸的乘算倍率（例如一次性结算等同于若干秒的DoT伤害）。",
+
+        defs: [
+            "<strong>D<sub>nm</sub> / D<sub>burst</sub> / D<sub>normal5</sub> :</strong> 噩梦单发伤害 / 总爆发伤害 / 风味变奏5段本体伤害",
+            "<strong>A<sub>base</sub> / P<sub>atk</sub> / A<sub>flat</sub> :</strong> 基础攻击力 / 攻击力%加成 / 固定攻击力加成（实数）",
+            "<strong>S<sub>nm</sub> :</strong> 「噩梦」每层每秒的持续伤害倍率%",
+            "<strong>B<sub>dark</sub> :</strong> 暗属性（暗异能）伤害加成%",
+            "<strong>G<sub>gear</sub> :</strong> 驱动「迪亚波罗斯」带来的抗性忽视%（12% = 0.12 / 24% = 0.24）",
+            "<strong>totalCD :</strong> 噩梦攻击的固定基础暴伤50% + 「最后的玫瑰」累积暴伤%的总和",
+            "<strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 自身等级 / 敌方等级 / 6魂提供的无视敌方防御力%",
+            "<strong>Stack / P<sub>clear</sub> :</strong> 噩梦消耗层数 / 5段噩梦清算（爆发）倍率",
+            "<strong>2.0 :</strong> 对应6魂效果「噩梦伤害+100%」的独立最终乘算增益倍率"
+        ]
+    },
+    en: {
+        title: "Requiem Damage Simulator",
+        subtitle: "Flavor Variation & Nightmare Clear Burst Support (C6 Assumption)",
+        card_status: "🔍 Character, Weapon & Gear Stats",
+        card_skill: "⚔️ Skill Multipliers & Nightmare Stacks",
+        card_result: "📊 Simulation Results (Expected Value)",
+        formula_title: "📐 Provisional Formula Details",
+        formula_1: "【1】 Base Damage Formula for 1 Stack of Nightmare (Dnm)",
+        formula_2: "【2】 Total Burst Damage Formula on 5th Hit (Dburst)",
+        def_title: "📋 Variable Definitions:",
+        btn_calc: "Calculate Damage",
+        
+        baseAtk: "Base ATK (Requiem Body + Weapon)",
+        atkPct: "Total ATK % Bonus (%)",
+        flatAtk: "Flat ATK Bonus (Real Number)",
+        darkBuff: "Dark DMG Bonus (%)",
+        critRate: "Crit Rate (%) *For Body Attacks",
+        critDmg: "Crit DMG (%) *For Body Attacks",
+        roseCritDmg: "🌹 Last Rose Stacked Crit DMG Bonus (%)",
+        diabolosIgnore: "⚙️ Gear 'Diabolos' RES Shred",
+        myLv: "Character Level (Your Level)",
+        enemyLv: "Enemy Level",
+        defIgnore: "C6 Effect: Enemy DEF Ignore (%)",
+        skillNormal: "‘Flavor Variation’ 1-4th Hit Multiplier (%)",
+        skillNormal5: "💥 ‘Flavor Variation’ 5th Hit (Clear Trigger) (%)",
+        skillBarel: "Barel Skill ‘Devil\'s Present’ Multiplier (%)",
+        skillExMelee: "🔮 EX Rail Culmination [Melee Mode] (%)",
+        skillExRange: "🔮 EX Rail Culmination [Ranged Mode] (%)",
+        skillNightmare: "‘Nightmare’ DoT 1-Stack Per Sec Multiplier (%)",
+        nightmareStacks: "💥 Nightmare Stacks Consumed on 5th Hit",
+        nightmareClearPop: "💥 5th Hit Nightmare Clear (Burst) Ratio (x)",
+        
+        diabolos_12: "4pc Set Effect (12% Shred)",
+        diabolos_24: "On Specific Reaction (24% Shred)",
+        diabolos_0: "None (0%)",
+
+        res_totalAtk: "Final Sheet ATK:",
+        res_normal: "Flavor Variation 1-4th Hit (Single):",
+        res_normal5: "Flavor Variation 5th Hit (Body Physical Only):",
+        res_barel: "Barel Skill ‘Devil\'s Present’:",
+        res_exmelee: "EX Rail Culmination [Melee Mode]:",
+        res_exrange: "EX Rail Culmination [Ranged Mode]:",
+        res_nightmare: "Nightmare DoT (Per Sec Total at Specified Stacks):",
+        res_burst: "🔥 Flavor Variation 5th Hit & Nightmare Clear Total Burst:",
+
+        tip_baseAtk: "Enter the 'Final ATK' value displayed on your status screen directly. In this case, set the two rows below (% and Flat) to 0.",
+        tip_atkPct: "Sum of ATK% bonuses from your Gear (Disk) sub-stats. If you entered Final ATK above, set this to 0.",
+        tip_flatAtk: "Flat ATK value from Gear main or sub-stats. If you entered Final ATK above, set this to 0.",
+        tip_darkBuff: "Enter the sum of 'Dark DMG Bonus (77.50%)' and 'Generic DMG Bonus (21.00%)' from your detailed status screen.",
+        tip_critRate: "Enter the Crit Rate from your status screen (affects body attacks, not Nightmare DoT).",
+        tip_critDmg: "Enter the Crit DMG from your status screen (affects body attacks, not Nightmare DoT).",
+        tip_roseCritDmg: "Enter the maximum total Crit DMG % that stacks from your signature weapon 'Last Rose' when Nightmare occurs or Barel Skill is cast.",
+        tip_diabolosIgnore: "Select according to the set effect status of Gear 'Diabolos' 4pc. It ignores enemy elemental resistance and amplifies final damage.",
+        tip_myLv: "Enter the current level of your Requiem. Used to calculate defense mitigation based on level difference.",
+        tip_enemyLv: "Enter the level of the target enemy (such as target boss).",
+        tip_defIgnore: "Enter the total % of 'Enemy DEF Ignore' from max duplicate or additional buffs.",
+        tip_skillNormal: "Enter the multiplier % for hits 1-4 of the Normal Attack 'Flavor Variation' specified in your in-game skill details.",
+        tip_skillNormal5: "Enter the multiplier % for the 5th hit of the Normal Attack combo. When it hits, it triggers the Nightmare Clear Burst simultaneously.",
+        tip_skillBarel: "Enter the multiplier % for the Barel Skill 'Devil's Present' (casting copied skills).",
+        tip_skillExMelee: "Enter the total damage multiplier % for the Ultimate 'EX Rail Culmination' cast in Melee combat mode.",
+        tip_skillExRange: "Enter the total damage multiplier % for the Ultimate 'EX Rail Culmination' cast in Ranged combat mode.",
+        tip_skillNightmare: "Enter the multiplier % for the continuous Dark damage dealt per stack per second by the unique debuff 'Nightmare'.",
+        tip_nightmareStacks: "Specify the number of Nightmare stacks (max 10) to be consumed from the enemy upon triggering the burst with the 5th hit.",
+        tip_nightmareClearPop: "Enter the burst multiplier specified by duplicate effects or skill mechanics (e.g., executing several seconds of DoT damage at once).",
+
+        defs: [
+            "<strong>D<sub>nm</sub> / D<sub>burst</sub> / D<sub>normal5</sub> :</strong> Nightmare Single DMG / Total Burst DMG / Flavor Variation 5th Hit Body DMG",
+            "<strong>A<sub>base</sub> / P<sub>atk</sub> / A<sub>flat</sub> :</strong> Base ATK / ATK % / Flat ATK Bonus",
+            "<strong>S<sub>nm</sub> :</strong> Multiplier % per stack per second for 'Nightmare' debuff",
+            "<strong>B<sub>dark</sub> :</strong> Dark DMG Bonus %",
+            "<strong>G<sub>gear</sub> :</strong> Resistance shred % from Gear 'Diabolos' (12% = 0.12 / 24% = 0.24)",
+            "<strong>totalCD :</strong> Sum of Nightmare's fixed base Crit DMG 50% + Last Rose stacked Crit DMG %",
+            "<strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> Your Level / Enemy Level / Enemy DEF Ignore % from C6",
+            "<strong>Stack / P<sub>clear</sub> :</strong> Nightmare Stacks Consumed / 5th Hit Nightmare Clear Burst Ratio",
+            "<strong>2.0 :</strong> Independent final multiplier factor corresponding to the C6 effect 'Nightmare DMG +100%'"
+        ]
+    }
+};
+
+function changeLanguage(lang) {
+    const data = i18nData[lang];
+    if (!data) return;
+
+    // セレクトボックス自体の見た目を選択言語に強制同期
+    document.getElementById('langSelect').value = lang;
+
+    // タイトル関係
+    document.getElementById('txt-title').innerText = data.title;
+    document.getElementById('txt-subtitle').innerText = data.subtitle;
+    document.getElementById('txt-card-status').innerText = data.card_status;
+    document.getElementById('txt-card-skill').innerText = data.card_skill;
+    document.getElementById('txt-card-result').innerText = data.card_result;
+    document.getElementById('txt-formula-title').innerText = data.formula_title;
+    document.getElementById('txt-formula-1').innerText = data.formula_1;
+    document.getElementById('txt-formula-2').innerText = data.formula_2;
+    document.getElementById('txt-def-title').innerText = data.def_title;
+    document.getElementById('btn-calc').innerText = data.btn_calc;
+
+    // フォームラベルとツールチップ
+    const labels = [
+        'baseAtk', 'atkPct', 'flatAtk', 'darkBuff', 'critRate', 'critDmg', 'roseCritDmg',
+        'diabolosIgnore', 'myLv', 'enemyLv', 'defIgnore', 'skillNormal', 'skillNormal5',
+        'skillBarel', 'skillExMelee', 'skillExRange', 'skillNightmare', 'nightmareStacks', 'nightmareClearPop'
+    ];
+
+    labels.forEach(id => {
+        const lblEl = document.getElementById('lbl-' + id);
+        const inputEl = document.getElementById(id);
+        if (lblEl) lblEl.innerText = data[id];
+        if (inputEl) inputEl.setAttribute('title', data['tip_' + id]);
+    });
+
+    // プルダウン項目
+    document.getElementById('opt-diabolos-12').innerText = data.diabolos_12;
+    document.getElementById('opt-diabolos-24').innerText = data.diabolos_24;
+    document.getElementById('opt-diabolos-0').innerText = data.diabolos_0;
+
+    // 結果ラベル
+    document.getElementById('res-lbl-totalAtk').innerText = data.res_totalAtk;
+    document.getElementById('res-lbl-normal').innerText = data.res_normal;
+    document.getElementById('res-lbl-normal5').innerText = data.res_normal5;
+    document.getElementById('res-lbl-barel').innerText = data.res_barel;
+    document.getElementById('res-lbl-exmelee').innerText = data.res_exmelee;
+    document.getElementById('res-lbl-exrange').innerText = data.res_exrange;
+    document.getElementById('res-lbl-nightmare').innerText = data.res_nightmare;
+    document.getElementById('res-lbl-burst').innerText = data.res_burst;
+
+    // 代数定義リスト生成
+    const listEl = document.getElementById('list-definitions');
+    listEl.innerHTML = '';
+    data.defs.forEach(defText => {
+        const li = document.createElement('li');
+        li.innerHTML = defText;
+        listEl.appendChild(li);
+    });
+
+    // ダメージの再計算
+    calculateDamage();
+}
+
+function calculateDamage() {
+    const baseAtk = parseFloat(document.getElementById('baseAtk').value) || 0;
+    const atkPct = parseFloat(document.getElementById('atkPct').value) || 0;
+    const flatAtk = parseFloat(document.getElementById('flatAtk').value) || 0;
+    const darkBuff = parseFloat(document.getElementById('darkBuff').value) || 0;
+    const critRate = parseFloat(document.getElementById('critRate').value) || 0;
+    const critDmg = parseFloat(document.getElementById('critDmg').value) || 0;
+    const roseCritDmg = parseFloat(document.getElementById('roseCritDmg').value) || 0;
+    const diabolosIgnore = parseFloat(document.getElementById('diabolosIgnore').value) || 0;
+    const myLv = parseFloat(document.getElementById('myLv').value) || 0;
+    const enemyLv = parseFloat(document.getElementById('enemyLv').value) || 0;
+    const defIgnore = parseFloat(document.getElementById('defIgnore').value) || 0;
+
+    const sNormal = parseFloat(
