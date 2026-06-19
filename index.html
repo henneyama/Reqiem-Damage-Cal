@@ -7,7 +7,7 @@
     <style>
         :root {
             --bg-color: #0f0f11;
-            --card-bg: #17171a;
+            --card-bg: rgba(23, 23, 26, 0.88); /* 背景を魅せるためにカードをほんのり透過 */
             --accent-color: #bb86fc;
             --text-color: #e3e3e6;
             --text-muted: #94949c;
@@ -17,7 +17,12 @@
         }
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--bg-color);
+            /* 提供された画像ファイルを背景に指定、文字を読みやすくするため暗めのフィルターを乗算 */
+            background-image: linear-gradient(rgba(15, 15, 17, 0.85), rgba(15, 15, 17, 0.85)), url('HHAV3x9bwAYYfNt.jpg');
+            background-size: cover;
+            background-position: center top;
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* スクロールしても背景を固定 */
             color: var(--text-color);
             line-height: 1.6;
             margin: 0;
@@ -27,17 +32,37 @@
             max-width: 1100px;
             margin: 0 auto;
         }
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            background: rgba(15, 15, 17, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
+        }
         h1 {
-            text-align: center;
             color: var(--accent-color);
-            margin-bottom: 5px;
+            margin: 0;
             font-size: 1.8rem;
         }
         .subtitle {
-            text-align: center;
             color: var(--text-muted);
-            margin-bottom: 30px;
             font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .lang-selector select {
+            background-color: #17171a;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            width: auto;
         }
         .grid {
             display: grid;
@@ -46,13 +71,15 @@
         }
         @media (max-width: 900px) {
             .grid { grid-template-columns: 1fr; }
+            .header-area { flex-direction: column; text-align: center; gap: 15px; }
         }
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px); /* カードの背景をぼかして高級感を演出 */
         }
         .card-title {
             font-size: 1.1rem;
@@ -74,9 +101,10 @@
             color: var(--text-color);
             flex: 1;
             padding-right: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
         input, select {
-            background-color: var(--bg-color);
+            background-color: #0f0f11;
             border: 1px solid var(--border-color);
             color: var(--text-color);
             padding: 6px 10px;
@@ -84,6 +112,7 @@
             width: 110px;
             text-align: right;
             font-size: 0.85rem;
+            cursor: help;
         }
         select { text-align-last: right; width: 132px; }
         input:focus, select:focus {
@@ -126,7 +155,7 @@
         .btn:hover { opacity: 0.9; }
         
         .math-block {
-            background-color: var(--bg-color);
+            background-color: #0f0f11;
             padding: 15px;
             border-radius: 6px;
             border: 1px solid var(--border-color);
@@ -160,7 +189,7 @@
             font-size: 0.8rem; 
             color: var(--text-muted); 
             line-height: 1.6; 
-            background: var(--bg-color); 
+            background: #0f0f11; 
             padding: 12px; 
             border-radius: 6px; 
             border: 1px solid var(--border-color); 
@@ -178,141 +207,152 @@
 <body>
 
 <div class="container">
-    <h1>レクイエム（安魂曲）ダメージシミュレーター</h1>
-    <div class="subtitle">フレーバー変奏＆悪夢清算バースト両対応（6凸前提）</div>
+    <div class="header-area">
+        <div>
+            <h1 id="txt-title">レクイエム（安魂曲）ダメージシミュレーター</h1>
+            <div id="txt-subtitle" class="subtitle">フレーバー変奏＆悪夢清算バースト両対応（6凸前提）</div>
+        </div>
+        <div class="lang-selector">
+            <select id="langSelect" onchange="changeLanguage(this.value)">
+                <option value="ja">日本語</option>
+                <option value="zh">简体中文</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+    </div>
     
     <div class="grid">
         <div class="card">
-            <div class="card-title">🔍 キャラ・武器・ギア ステータス</div>
+            <div class="card-title" id="txt-card-status">🔍 キャラ・武器・ギア ステータス</div>
             
             <div class="form-group">
-                <label>基礎攻撃力 (レクイエム本体 ＋ 武器)</label>
-                <input type="number" id="baseAtk" value="1250">
+                <label id="lbl-baseAtk">基礎攻撃力 (レクイエム本体 ＋ 武器)</label>
+                <input type="number" id="baseAtk" value="2153">
             </div>
             <div class="form-group">
-                <label>攻撃力％ボーナス合計 (%)</label>
-                <input type="number" id="atkPct" value="95">
+                <label id="lbl-atkPct">攻撃力％ボーナス合計 (%)</label>
+                <input type="number" id="atkPct" value="0">
             </div>
             <div class="form-group">
-                <label>固定攻撃力加算 (実数合計)</label>
-                <input type="number" id="flatAtk" value="380">
+                <label id="lbl-flatAtk">固定攻撃力加算 (実数合計)</label>
+                <input type="number" id="flatAtk" value="0">
             </div>
             <div class="form-group">
-                <label>闇属性（闇異能）ダメージバフ (%)</label>
-                <input type="number" id="darkBuff" value="46.6">
+                <label id="lbl-darkBuff">闇属性（闇異能）ダメージバフ (%)</label>
+                <input type="number" id="darkBuff" value="98.5">
             </div>
             <div class="form-group">
-                <label>自身の会心率 (%) ※本体攻撃用</label>
-                <input type="number" id="critRate" value="60">
+                <label id="lbl-critRate">自身の会心率 (%) ※本体攻撃用</label>
+                <input type="number" id="critRate" value="34">
             </div>
             <div class="form-group">
-                <label>自身の会心ダメージ (%) ※本体攻撃用</label>
-                <input type="number" id="critDmg" value="160">
+                <label id="lbl-critDmg">自身の会心ダメージ (%) ※本体攻撃用</label>
+                <input type="number" id="critDmg" value="106">
             </div>
             <div class="form-group" style="background-color: rgba(187,134,252,0.08); padding: 4px; border-radius: 4px;">
-                <label>🌹 ラスト・ローズ累積会心ダメバフ (%)</label>
-                <input type="number" id="roseCritDmg" value="100">
+                <label id="lbl-roseCritDmg">🌹 ラスト・ローズ累積会心ダメバフ (%)</label>
+                <input type="number" id="roseCritDmg" value="120">
             </div>
             <div class="form-group">
-                <label>⚙️ ギア「ディアボロス」耐性無視</label>
+                <label id="lbl-diabolosIgnore">⚙️ ギア「ディアボロス」耐性無視</label>
                 <select id="diabolosIgnore">
-                    <option value="12">4セット効果 (12%無視)</option>
-                    <option value="24" selected>特定反応時 (24%無視)</option>
-                    <option value="0">なし (0%)</option>
+                    <option value="12" id="opt-diabolos-12">4セット効果 (12%無視)</option>
+                    <option value="24" id="opt-diabolos-24" selected>特定反応時 (24%無視)</option>
+                    <option value="0" id="opt-diabolos-0">なし (0%)</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>プレイキャラクターのレベル (自分)</label>
+                <label id="lbl-myLv">プレイキャラクターのレベル (自分)</label>
                 <input type="number" id="myLv" value="80">
             </div>
             <div class="form-group">
-                <label>敵（エネミー）のレベル</label>
-                <input type="number" id="enemyLv" value="90">
+                <label id="lbl-enemyLv">敵（エネミー）のレベル</label>
+                <input type="number" id="enemyLv" value="80">
             </div>
             <div class="form-group">
-                <label>6凸効果：敵の防御無視 (%)</label>
-                <input type="number" id="defIgnore" value="45">
+                <label id="lbl-defIgnore">6凸効果：敵の防御無視 (%)</label>
+                <input type="number" id="defIgnore" value="20">
             </div>
             
-            <div class="card-title" style="margin-top:20px; margin-bottom:12px;">⚔️ スキル倍率 ＆ 悪夢スタック設定</div>
+            <div class="card-title" style="margin-top:20px; margin-bottom:12px;" id="txt-card-skill">⚔️ スキル倍率 ＆ 悪夢スタック設定</div>
             <div class="form-group">
-                <label>「フレーバー変奏」1〜4段目 単発倍率 (%)</label>
-                <input type="number" id="skillNormal" value="75">
+                <label id="lbl-skillNormal">「フレーバー変奏」1〜4段目 単発倍率 (%)</label>
+                <input type="number" id="skillNormal" value="181.7">
             </div>
             <div class="form-group" style="background-color: rgba(3,218,198,0.05); padding: 4px; border-radius: 4px;">
-                <label>💥 「フレーバー変奏」5段目（清算トリガー）(%)</label>
-                <input type="number" id="skillNormal5" value="150">
+                <label id="lbl-skillNormal5">💥 「フレーバー変奏」5段目（清算トリガー）(%)</label>
+                <input type="number" id="skillNormal5" value="357.5">
             </div>
             <div class="form-group">
-                <label>バイレール「悪魔のプレゼント」倍率 (%)</label>
-                <input type="number" id="skillBarel" value="260">
+                <label id="lbl-skillBarel">バイレール「悪魔のプレゼント」倍率 (%)</label>
+                <input type="number" id="skillBarel" value="30">
             </div>
             <div class="form-group" style="background-color: rgba(187,134,252,0.05); padding: 4px; border-radius: 4px;">
-                <label>🔮 EXレール終結【近接モード】倍率 (%)</label>
-                <input type="number" id="skillExMelee" value="520">
+                <label id="lbl-skillExMelee">🔮 EXレール終結【近接モード】倍率 (%)</label>
+                <input type="number" id="skillExMelee" value="1999.1">
             </div>
             <div class="form-group" style="background-color: rgba(187,134,252,0.05); padding: 4px; border-radius: 4px;">
-                <label>🔮 EXレール終結【遠距離モード】倍率 (%)</label>
-                <input type="number" id="skillExRange" value="495">
+                <label id="lbl-skillExRange">🔮 EXレール終結【遠距離モード】倍率 (%)</label>
+                <input type="number" id="skillExRange" value="1999.2">
             </div>
             <div class="form-group">
-                <label>「悪夢」デバフ 1スタック毎秒倍率 (%)</label>
-                <input type="number" id="skillNightmare" value="45">
+                <label id="lbl-skillNightmare">「悪夢」デバフ 1スタック毎秒倍率 (%)</label>
+                <input type="number" id="skillNightmare" value="14.8">
             </div>
             <div class="form-group">
-                <label>💥 5段目ヒット時の悪夢消費スタック数</label>
+                <label id="lbl-nightmareStacks">💥 5段目ヒット時の悪夢消費スタック数</label>
                 <input type="number" id="nightmareStacks" value="10" min="1" max="10">
             </div>
             <div class="form-group" style="background-color: rgba(3,218,198,0.05); padding: 4px; border-radius: 4px;">
-                <label>💥 5段目悪夢清算（バースト）倍率 (倍)</label>
+                <label id="lbl-nightmareClearPop">💥 5段目悪夢清算（バースト）倍率 (倍)</label>
                 <input type="number" id="nightmareClearPop" value="3.5" step="0.1">
             </div>
 
-            <button class="btn" onclick="calculateDamage()">ダメージを計算する</button>
+            <button class="btn" onclick="calculateDamage()" id="btn-calc">ダメージを計算する</button>
         </div>
 
         <div class="card" style="display: flex; flex-direction: column; justify-content: flex-start;">
             <div>
-                <div class="card-title">📊 シミュレーション結果 (期待値)</div>
+                <div class="card-title" id="txt-card-result">📊 シミュレーション結果 (期待値)</div>
                 
                 <div class="result-item">
-                    <span class="result-label">最終ステータス攻撃力:</span>
+                    <span class="result-label" id="res-lbl-totalAtk">最終ステータス攻撃力:</span>
                     <span id="resTotalAtk" style="color: #fff;">-</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label">フレーバー変奏 1〜4段目 (単発):</span>
+                    <span class="result-label" id="res-lbl-normal">フレーバー変奏 1〜4段目 (単発):</span>
                     <span id="resNormal" class="result-value">-</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label">フレーバー変奏 5段目 (本体物理のみ):</span>
+                    <span class="result-label" id="res-lbl-normal5">フレーバー変奏 5段目 (本体物理のみ):</span>
                     <span id="resNormal5" class="result-value">-</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label">バイレール「悪魔のプレゼント」:</span>
+                    <span class="result-label" id="res-lbl-barel">バイレール「悪魔のプレゼント」:</span>
                     <span id="resBarel" class="result-value">-</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label" style="color: #bfa2ff;">EXレール終結【近接モード】:</span>
+                    <span class="result-label" style="color: #bfa2ff;" id="res-lbl-exmelee">EXレール終結【近接モード】:</span>
                     <span id="resExMelee" class="result-value" style="color: #bfa2ff;">-</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label" style="color: #bfa2ff;">EXレール終結【遠距離モード】:</span>
+                    <span class="result-label" style="color: #bfa2ff;" id="res-lbl-exrange">EXレール終結【遠距離モード】:</span>
                     <span id="resExRange" class="result-value" style="color: #bfa2ff;">-</span>
                 </div>
                 <div class="result-item">
-                    <span class="result-label">悪夢DoT (指定スタック時の毎秒合計):</span>
+                    <span class="result-label" id="res-lbl-nightmare">悪夢DoT (指定スタック時の毎秒合計):</span>
                     <span id="resNightmareTotal" class="result-value nightmare">-</span>
                 </div>
                 
                 <div class="result-item" style="background-color: rgba(3,218,198,0.08); padding: 15px 10px; border-radius: 6px; margin-top: 15px; border: 1px solid var(--success-color); margin-bottom: 15px;">
-                    <span class="result-label" style="color: var(--success-color); font-size: 1.05rem;">🔥 フレーバー変奏5段目・悪夢清算総バースト:</span>
+                    <span class="result-label" style="color: var(--success-color); font-size: 1.05rem;" id="res-lbl-burst">🔥 フレーバー変奏5段目・悪夢清算総バースト:</span>
                     <span id="resTotalBurst" class="result-value burst">-</span>
                 </div>
             </div>
 
-            <div class="card-title" style="margin-top: 15px; font-size: 1rem;">📐 暫定計算式詳細</div>
+            <div class="card-title" style="margin-top: 15px; font-size: 1rem;" id="txt-formula-title">📐 暫定計算式詳細</div>
             
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">【1】 悪夢1スタックの基本ダメージ式 (<span class="math-variable">D<span class="math-sub">nm</span></span>)</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;" id="txt-formula-1">【1】 悪夢1スタックの基本ダメージ式 (Dnm)</div>
             <div class="math-block">
                 <span class="math-variable">D<span class="math-sub">nm</span></span> = 
                 [ <span class="math-variable">A<span class="math-sub">base</span></span> &times; (1 + <span class="math-variable">P<span class="math-sub">atk</span></span>) + <span class="math-variable">A<span class="math-sub">flat</span></span> ]
@@ -327,103 +367,72 @@
                 </div>
             </div>
 
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;">【2】 5段目ヒット時の総バーストダメージ式 (<span class="math-variable">D<span class="math-sub">burst</span></span>)</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;" id="txt-formula-2">【2】 5段目ヒット時の総バーストダメージ式 (Dburst)</div>
             <div class="math-block" style="color: var(--success-color); border-color: rgba(3,218,198,0.3);">
                 <span class="math-variable">D<span class="math-sub">burst</span></span> = 
                 <span class="math-variable">D<span class="math-sub">normal5</span></span> + ( <span class="math-variable">D<span class="math-sub">nm</span></span> &times; <span class="math-variable">Stack</span> &times; <span class="math-variable">P<span class="math-sub">clear</span></span> &times; 2.0 )
             </div>
 
             <div class="variable-definition-box">
-                <strong>📋 各代数の定義解説:</strong>
-                <ul>
-                    <li><strong>D<sub>nm</sub> / D<sub>burst</sub> / D<sub>normal5</sub> :</strong> 悪夢単発ダメージ / 総バーストダメージ / フレーバー変奏5段目本体ダメージ</li>
-                    <li><strong>A<sub>base</sub> / P<sub>atk</sub> / A<sub>flat</sub> :</strong> 基礎攻撃力 / 攻撃力％ / 固定攻撃力加算（実数）</li>
-                    <li><strong>S<sub>nm</sub> :</strong> 「悪夢」デバフの1スタック毎秒倍率％</li>
-                    <li><strong>B<sub>dark</sub> :</strong> 闇属性（闇異能）ダメージバフ％</li>
-                    <li><strong>G<sub>gear</sub> :</strong> ギア「ディアボロス」による耐性無視％（12% = 0.12 / 24% = 0.24）</li>
-                    <li><strong>totalCD :</strong> 悪夢攻撃の固定基礎会心ダメ50% ＋ ラスト・ローズ累積会心ダメバフ%の合算</li>
-                    <li><strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 自分のレベル / 敵のレベル / 6凸による敵の防御力無視％</li>
-                    <li><strong>Stack / P<sub>clear</sub> :</strong> 悪夢の消費スタック数 / 5段目悪夢清算（バースト）倍率</li>
-                    <li><strong>2.0 :</strong> 6凸効果「悪夢ダメージ＋100%」に相当する独立最終乗算バフ倍率</li>
-                </ul>
+                <strong id="txt-def-title">📋 各代数の定義解説:</strong>
+                <ul id="list-definitions">
+                    </ul>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-function calculateDamage() {
-    // ステータス取得
-    const baseAtk = parseFloat(document.getElementById('baseAtk').value) || 0;
-    const atkPct = parseFloat(document.getElementById('atkPct').value) || 0;
-    const flatAtk = parseFloat(document.getElementById('flatAtk').value) || 0;
-    const darkBuff = parseFloat(document.getElementById('darkBuff').value) || 0;
-    const critRate = parseFloat(document.getElementById('critRate').value) || 0;
-    const critDmg = parseFloat(document.getElementById('critDmg').value) || 0;
-    const roseCritDmg = parseFloat(document.getElementById('roseCritDmg').value) || 0;
-    const diabolosIgnore = parseFloat(document.getElementById('diabolosIgnore').value) || 0;
-    const myLv = parseFloat(document.getElementById('myLv').value) || 0;
-    const enemyLv = parseFloat(document.getElementById('enemyLv').value) || 0;
-    const defIgnore = parseFloat(document.getElementById('defIgnore').value) || 0;
+// 多言語翻訳データ辞書
+const i18nData = {
+    ja: {
+        title: "レクイエム（安魂曲）ダメージシミュレーター",
+        subtitle: "フレーバー変奏＆悪夢清算バースト両対応（6凸前提）",
+        card_status: "🔍 キャラ・武器・ギア ステータス",
+        card_skill: "⚔️ スキル倍率 ＆ 悪夢スタック設定",
+        card_result: "📊 シミュレーション結果 (期待値)",
+        formula_title: "📐 暫定計算式詳細",
+        formula_1: "【1】 悪夢1スタックの基本ダメージ式 (Dnm)",
+        formula_2: "【2】 5段目ヒット時の総バーストダメージ式 (Dburst)",
+        def_title: "📋 各代数の定義解説:",
+        btn_calc: "ダメージを計算する",
+        
+        baseAtk: "基礎攻撃力 (レクイエム本体 ＋ 武器)",
+        atkPct: "攻撃力％ボーナス合計 (%)",
+        flatAtk: "固定攻撃力加算 (実数合計)",
+        darkBuff: "闇属性（闇異能）ダメージバフ (%)",
+        critRate: "自身の会心率 (%) ※本体攻撃用",
+        critDmg: "自身の会心ダメージ (%) ※本体攻撃用",
+        roseCritDmg: "🌹 ラスト・ローズ累積会心ダメバフ (%)",
+        diabolosIgnore: "⚙️ ギア「ディアボロス」耐性無視",
+        myLv: "プレイキャラクターのレベル (自分)",
+        enemyLv: "敵（エネミー）のレベル",
+        defIgnore: "6凸効果：敵の防御無視 (%)",
+        skillNormal: "「フレーバー変奏」1〜4段目 単発倍率 (%)",
+        skillNormal5: "💥 「フレーバー変奏」5段目（清算トリガー）(%)",
+        skillBarel: "バイレール「悪魔のプレゼント」倍率 (%)",
+        skillExMelee: "🔮 EXレール終結【近接モード】倍率 (%)",
+        skillExRange: "🔮 EXレール終結【遠距離モード】倍率 (%)",
+        skillNightmare: "「悪夢」デバフ 1スタック毎秒倍率 (%)",
+        nightmareStacks: "💥 5段目ヒット時の悪夢消費スタック数",
+        nightmareClearPop: "💥 5段目悪夢清算（バースト）倍率 (倍)",
+        
+        diabolos_12: "4セット効果 (12%無視)",
+        diabolos_24: "特定反応時 (24%無視)",
+        diabolos_0: "なし (0%)",
 
-    // スキル倍率取得
-    const sNormal = parseFloat(document.getElementById('skillNormal').value) || 0;
-    const sNormal5 = parseFloat(document.getElementById('skillNormal5').value) || 0;
-    const sBarel = parseFloat(document.getElementById('skillBarel').value) || 0;
-    const sExMelee = parseFloat(document.getElementById('skillExMelee').value) || 0;
-    const sExRange = parseFloat(document.getElementById('skillExRange').value) || 0;
-    const sNightmare = parseFloat(document.getElementById('skillNightmare').value) || 0;
-    const nightmareStacks = parseFloat(document.getElementById('nightmareStacks').value) || 0;
-    const nClearPop = parseFloat(document.getElementById('nightmareClearPop').value) || 0;
+        res_totalAtk: "最終ステータス攻撃力:",
+        res_normal: "フレーバー変奏 1〜4段目 (単発):",
+        res_normal5: "フレーバー変奏 5段目 (本体物理のみ):",
+        res_barel: "バイレール「悪魔のプレゼント」:",
+        res_exmelee: "EXレール終結【近接モード】:",
+        res_exrange: "EXレール終結【遠距離モード】:",
+        res_nightmare: "悪夢DoT (指定スタック時の毎秒合計):",
+        res_burst: "🔥 フレーバー変奏5段目・悪夢清算総バースト:",
 
-    // 1. 最終攻撃力
-    const totalAtk = (baseAtk * (1 + atkPct / 100)) + flatAtk;
-    document.getElementById('resTotalAtk').innerText = Math.floor(totalAtk).toLocaleString();
-
-    // 2. 闇属性バフ枠 ＆ ギア耐性無視
-    const darkMod = 1 + (darkBuff / 100);
-    const gearMod = 1 + (diabolosIgnore / 100); 
-
-    // 3. 6凸防御減衰率
-    const myFactor = myLv + 100;
-    const enemyFactor = (enemyLv + 100) * (1 - defIgnore / 100);
-    const defMitigation = myFactor / (myFactor + enemyFactor);
-
-    // 4. 会心補正
-    const totalBodyCritDmg = critDmg + roseCritDmg;
-    const bodyCritMod = 1 + ((Math.min(critRate, 100) / 100) * (totalBodyCritDmg / 100));
-
-    // 悪夢用固定会心
-    const totalNightmareCritDmg = 50 + roseCritDmg;
-    const nightmareCritMod = 1 + (0.50 * (totalNightmareCritDmg / 100));
-
-    // 5. 各通常攻撃ダメージ計算
-    const dmgNormal = totalAtk * (sNormal / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
-    const dmgNormal5 = totalAtk * (sNormal5 / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
-    const dmgBarel = totalAtk * (sBarel / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
-    const dmgExMelee = totalAtk * (sExMelee / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
-    const dmgExRange = totalAtk * (sExRange / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
-    
-    // 悪夢1スタックDoT
-    const dmgNightmare1Stack = totalAtk * (sNightmare / 100) * darkMod * gearMod * nightmareCritMod * defMitigation;
-    const totalNightmareDoT = dmgNightmare1Stack * nightmareStacks;
-
-    // フレーバー変奏5段目・悪夢清算（総バーストダメージ）
-    const dmgClearBurst = (dmgNightmare1Stack * 2.0) * nightmareStacks * nClearPop;
-    const totalBurstCombo = dmgNormal5 + dmgClearBurst;
-
-    // 出力へ反映
-    document.getElementById('resNormal').innerText = Math.floor(dmgNormal).toLocaleString() + " (平均)";
-    document.getElementById('resNormal5').innerText = Math.floor(dmgNormal5).toLocaleString() + " (平均)";
-    document.getElementById('resBarel').innerText = Math.floor(dmgBarel).toLocaleString() + " (平均)";
-    document.getElementById('resExMelee').innerText = Math.floor(dmgExMelee).toLocaleString() + " (平均)";
-    document.getElementById('resExRange').innerText = Math.floor(dmgExRange).toLocaleString() + " (平均)";
-    document.getElementById('resNightmareTotal').innerText = Math.floor(totalNightmareDoT).toLocaleString() + " /秒";
-    document.getElementById('resTotalBurst').innerText = Math.floor(totalBurstCombo).toLocaleString();
-}
-
-window.onload = calculateDamage;
-</script>
-
-</body>
-</html>
+        tip_baseAtk: "ステータス画面に表示されている「最終攻撃力」の数値をそのまま入力してください。その場合、下の2項目（％と固定値）は 0 にします。",
+        tip_atkPct: "ディスク（聖遺物）のサブステータス等による攻撃力%の合計値。上に最終攻撃力を直接入力した場合は 0 にしてください。",
+        tip_flatAtk: "ディスクのメインやサブステによる固定値の攻撃力。上に最終攻撃力を直接入力した場合は 0 にしてください。",
+        tip_darkBuff: "ステータス詳細画面の「闇異能ダメージ強化(77.50%)」に「汎用ダメージ強化(21.00%)」を足し合わせた合計値を入力します。",
+        tip_critRate: "ステータス画面の「クリティカル率」を入力します（悪夢デバフ以外の本体攻撃の会心率に影響します）。",
+        tip_
