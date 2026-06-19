@@ -89,8 +89,16 @@
             padding-bottom: 8px;
             font-weight: bold;
         }
+        /* 入力エリアを包むコンテナ */
+        .form-group-container {
+            margin-bottom: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 4px;
+        }
+        .form-group-container:last-child {
+            border-bottom: none;
+        }
         .form-group {
-            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -101,6 +109,16 @@
             flex: 1;
             padding-right: 10px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            font-weight: bold;
+        }
+        /* 新設：常時表示される親切なガイド注釈テキスト */
+        .field-tip {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            margin-bottom: 4px;
+            padding-left: 2px;
+            line-height: 1.3;
         }
         input, select {
             background-color: #0f0f11;
@@ -111,7 +129,6 @@
             width: 110px;
             text-align: right;
             font-size: 0.85rem;
-            cursor: help;
         }
         select { text-align-last: right; width: 132px; }
         input:focus, select:focus {
@@ -224,87 +241,162 @@
         <div class="card">
             <div class="card-title" id="txt-card-status">🔍 キャラ・武器・ギア ステータス</div>
             
-            <div class="form-group">
-                <label id="lbl-baseAtk">基礎攻撃力 (レクイエム本体 ＋ 武器)</label>
-                <input type="number" id="baseAtk" value="2153">
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-baseAtk">基礎攻撃力 (レクイエム本体 ＋ 武器)</label>
+                    <input type="number" id="baseAtk" value="2153">
+                </div>
+                <div class="field-tip" id="tip-baseAtk">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-atkPct">攻撃力％ボーナス合計 (%)</label>
-                <input type="number" id="atkPct" value="0">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-atkPct">攻撃力％ボーナス合計 (%)</label>
+                    <input type="number" id="atkPct" value="0">
+                </div>
+                <div class="field-tip" id="tip-atkPct">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-flatAtk">固定攻撃力加算 (実数合計)</label>
-                <input type="number" id="flatAtk" value="0">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-flatAtk">固定攻撃力加算 (実数合計)</label>
+                    <input type="number" id="flatAtk" value="0">
+                </div>
+                <div class="field-tip" id="tip-flatAtk">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-darkBuff">闇属性（闇異能）ダメージバフ (%)</label>
-                <input type="number" id="darkBuff" value="98.5">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-darkBuff">闇属性（闇異能）ダメージバフ (%)</label>
+                    <input type="number" id="darkBuff" value="98.5">
+                </div>
+                <div class="field-tip" id="tip-darkBuff">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-critRate">自身の会心率 (%) ※本体攻撃用</label>
-                <input type="number" id="critRate" value="34">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-critRate">自身の会心率 (%) ※本体攻撃用</label>
+                    <input type="number" id="critRate" value="34">
+                </div>
+                <div class="field-tip" id="tip-critRate">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-critDmg">自身の会心ダメージ (%) ※本体攻撃用</label>
-                <input type="number" id="critDmg" value="106">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-critDmg">自身の会心ダメージ (%) ※本体攻撃用</label>
+                    <input type="number" id="critDmg" value="106">
+                </div>
+                <div class="field-tip" id="tip-critDmg">-</div>
             </div>
-            <div class="form-group" style="background-color: rgba(187,134,252,0.08); padding: 4px; border-radius: 4px;">
-                <label id="lbl-roseCritDmg">🌹 ラスト・ローズ累積会心ダメバフ (%)</label>
-                <input type="number" id="roseCritDmg" value="120">
+            
+            <div class="form-group-container" style="background-color: rgba(187,134,252,0.08); padding: 4px; border-radius: 4px;">
+                <div class="form-group">
+                    <label id="lbl-roseCritDmg">🌹 ラスト・ローズ累積会心ダメバフ (%)</label>
+                    <input type="number" id="roseCritDmg" value="120">
+                </div>
+                <div class="field-tip" id="tip-roseCritDmg">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-diabolosIgnore">⚙️ ギア「ディアボロス」耐性無視</label>
-                <select id="diabolosIgnore">
-                    <option value="12" id="opt-diabolos-12">4セット効果 (12%無視)</option>
-                    <option value="24" id="opt-diabolos-24" selected>特定反応時 (24%無視)</option>
-                    <option value="0" id="opt-diabolos-0">なし (0%)</option>
-                </select>
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-diabolosIgnore">⚙️ ギア「ディアボロス」耐性無視</label>
+                    <select id="diabolosIgnore">
+                        <option value="12" id="opt-diabolos-12">4セット効果 (12%無視)</option>
+                        <option value="24" id="opt-diabolos-24" selected>特定反応時 (24%無視)</option>
+                        <option value="0" id="opt-diabolos-0">なし (0%)</option>
+                    </select>
+                </div>
+                <div class="field-tip" id="tip-diabolosIgnore">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-myLv">プレイキャラクターのレベル (自分)</label>
-                <input type="number" id="myLv" value="80">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-myLv">プレイキャラクターのレベル (自分)</label>
+                    <input type="number" id="myLv" value="80">
+                </div>
+                <div class="field-tip" id="tip-myLv">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-enemyLv">敵（エネミー）のレベル</label>
-                <input type="number" id="enemyLv" value="80">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-enemyLv">敵（エネミー）のレベル</label>
+                    <input type="number" id="enemyLv" value="80">
+                </div>
+                <div class="field-tip" id="tip-enemyLv">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-defIgnore">6凸効果：敵の防御無視 (%)</label>
-                <input type="number" id="defIgnore" value="20">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-defIgnore">6凸効果：敵の防御無視 (%)</label>
+                    <input type="number" id="defIgnore" value="20">
+                </div>
+                <div class="field-tip" id="tip-defIgnore">-</div>
             </div>
             
             <div class="card-title" style="margin-top:20px; margin-bottom:12px;" id="txt-card-skill">⚔️ スキル倍率 ＆ 悪夢スタック設定</div>
-            <div class="form-group">
-                <label id="lbl-skillNormal">「フレーバー変奏」1〜4段目 単発倍率 (%)</label>
-                <input type="number" id="skillNormal" value="181.7">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-skillNormal">「フレーバー変奏」1〜4段目 単発倍率 (%)</label>
+                    <input type="number" id="skillNormal" value="181.7">
+                </div>
+                <div class="field-tip" id="tip-skillNormal">-</div>
             </div>
-            <div class="form-group" style="background-color: rgba(3,218,198,0.05); padding: 4px; border-radius: 4px;">
-                <label id="lbl-skillNormal5">💥 「フレーバー変奏」5段目（清算トリガー）(%)</label>
-                <input type="number" id="skillNormal5" value="357.5">
+            
+            <div class="form-group-container" style="background-color: rgba(3,218,198,0.05); padding: 4px; border-radius: 4px;">
+                <div class="form-group">
+                    <label id="lbl-skillNormal5">💥 「フレーバー変奏」5段目（清算トリガー）(%)</label>
+                    <input type="number" id="skillNormal5" value="357.5">
+                </div>
+                <div class="field-tip" id="tip-skillNormal5">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-skillBarel">バイレール「悪魔のプレゼント」倍率 (%)</label>
-                <input type="number" id="skillBarel" value="30">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-skillBarel">バイレール「悪魔のプレゼント」倍率 (%)</label>
+                    <input type="number" id="skillBarel" value="30">
+                </div>
+                <div class="field-tip" id="tip-skillBarel">-</div>
             </div>
-            <div class="form-group" style="background-color: rgba(187,134,252,0.05); padding: 4px; border-radius: 4px;">
-                <label id="lbl-skillExMelee">🔮 EXレール終結【近接モード】倍率 (%)</label>
-                <input type="number" id="skillExMelee" value="1999.1">
+            
+            <div class="form-group-container" style="background-color: rgba(187,134,252,0.05); padding: 4px; border-radius: 4px;">
+                <div class="form-group">
+                    <label id="lbl-skillExMelee">🔮 EXレール終結【近接モード】倍率 (%)</label>
+                    <input type="number" id="skillExMelee" value="1999.1">
+                </div>
+                <div class="field-tip" id="tip-skillExMelee">-</div>
             </div>
-            <div class="form-group" style="background-color: rgba(187,134,252,0.05); padding: 4px; border-radius: 4px;">
-                <label id="lbl-skillExRange">🔮 EXレール終結【遠距離モード】倍率 (%)</label>
-                <input type="number" id="skillExRange" value="1999.2">
+            
+            <div class="form-group-container" style="background-color: rgba(187,134,252,0.05); padding: 4px; border-radius: 4px;">
+                <div class="form-group">
+                    <label id="lbl-skillExRange">🔮 EXレール終結【遠距離モード】倍率 (%)</label>
+                    <input type="number" id="skillExRange" value="1999.2">
+                </div>
+                <div class="field-tip" id="tip-skillExRange">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-skillNightmare">「悪夢」デバフ 1スタック毎秒倍率 (%)</label>
-                <input type="number" id="skillNightmare" value="14.8">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-skillNightmare">「悪夢」デバフ 1スタック毎秒倍率 (%)</label>
+                    <input type="number" id="skillNightmare" value="14.8">
+                </div>
+                <div class="field-tip" id="tip-skillNightmare">-</div>
             </div>
-            <div class="form-group">
-                <label id="lbl-nightmareStacks">💥 5段目ヒット時の悪夢消費スタック数</label>
-                <input type="number" id="nightmareStacks" value="10" min="1" max="10">
+            
+            <div class="form-group-container">
+                <div class="form-group">
+                    <label id="lbl-nightmareStacks">💥 5段目ヒット時の悪夢消費スタック数</label>
+                    <input type="number" id="nightmareStacks" value="10" min="1" max="10">
+                </div>
+                <div class="field-tip" id="tip-nightmareStacks">-</div>
             </div>
-            <div class="form-group" style="background-color: rgba(3,218,198,0.05); padding: 4px; border-radius: 4px;">
-                <label id="lbl-nightmareClearPop">💥 5段目悪夢清算（バースト）倍率 (倍)</label>
-                <input type="number" id="nightmareClearPop" value="3.5" step="0.1">
+            
+            <div class="form-group-container" style="background-color: rgba(3,218,198,0.05); padding: 4px; border-radius: 4px;">
+                <div class="form-group">
+                    <label id="lbl-nightmareClearPop">💥 5段目悪夢清算（バースト）倍率 (倍)</label>
+                    <input type="number" id="nightmareClearPop" value="3.5" step="0.1">
+                </div>
+                <div class="field-tip" id="tip-nightmareClearPop">-</div>
             </div>
 
             <button class="btn" onclick="calculateDamage()" id="btn-calc">ダメージを計算する</button>
@@ -429,25 +521,26 @@ const i18nData = {
         res_nightmare: "悪夢DoT (指定スタック時の毎秒合計):",
         res_burst: "🔥 フレーバー変奏5段目・悪夢清算総バースト:",
 
-        tip_baseAtk: "ステータス画面に表示されている「最終攻撃力」の数値をそのまま入力してください。その場合、下の2項目（％と固定値）は 0 にします。",
-        tip_atkPct: "ディスク（聖遺物）のサブステータス等による攻撃力%の合計値。上に最終攻撃力を直接入力した場合は 0 にしてください。",
-        tip_flatAtk: "ディスクのメインやサブステによる固定値の攻撃力。上に最終攻撃力を直接入力した場合は 0 にしてください。",
-        tip_darkBuff: "ステータス詳細画面の「闇異能ダメージ強化(77.50%)」に「汎用ダメージ強化(21.00%)」を足し合わせた合計値を入力します。",
-        tip_critRate: "ステータス画面の「クリティカル率」を入力します（悪夢デバフ以外の本体攻撃の会心率に影響します）。",
-        tip_critDmg: "ステータス画面の「クリティカルダメージ」を入力します（悪夢デバフ以外の本体攻撃の会心ダメージに影響します）。",
-        tip_roseCritDmg: "専用武器「ラスト・ローズ」の効果で、悪夢発生時またはバイレール発動時に累積する会心ダメージバフの合計最大％を入力します。",
-        tip_diabolosIgnore: "ギア『ディアボロス』4セットの装備状態に合わせて選択してください。敵の属性耐性を無視して最終ダメージを増幅させます。",
-        tip_myLv: "現在のレクイエムのキャラクターレベルを入力します。敵とのレベル差による防御減衰計算に使用します。",
-        tip_enemyLv: "想定する敵エネミー（ターゲットとなるボス等）のレベルを入力します。",
+        // ガイド注釈テキスト（常時表示用）
+        tip_baseAtk: "ステータス画面の「最終攻撃力」の数値をそのまま入力してください。その場合、下の「％」と「固定値」は 0 にします。",
+        tip_atkPct: "ディスクのサブステータス等による攻撃力%の合計値。上に最終攻撃力を直接入力した場合は 0 にしてください。",
+        tip_flatAtk: "ディスクの固定値攻撃力の合計。上に最終攻撃力を直接入力した場合は 0 にしてください。",
+        tip_darkBuff: "ステータス詳細の「闇異能ダメージ強化(77.50%)」に「汎用ダメージ強化(21.00%)」を足した合計値を入力します。",
+        tip_critRate: "ステータス画面の「クリティカル率」を入力します（悪夢以外の本体攻撃の会心率に影響します）。",
+        tip_critDmg: "ステータス画面の「クリティカルダメージ」を入力します（悪夢以外の本体攻撃の会心ダメージに影響します）。",
+        tip_roseCritDmg: "専用武器「ラスト・ローズ」の効果で、悪夢発生時またはバイレール発動時に累積する会心ダメージバフの最大合計％です。",
+        tip_diabolosIgnore: "ギア『ディアボロス』4セットの装備状態に合わせて選択してください。敵の属性耐性を無視して最終火力を伸ばします。",
+        tip_myLv: "現在のレクイエムのキャラクターレベルを入力します。敵とのレベル差による防御減衰の計算に使用します。",
+        tip_enemyLv: "想定するターゲット（ボスなど）のレベルを入力します。",
         tip_defIgnore: "完凸効果や追加バフによる「敵の防御力無視」の合計％を入力します。",
-        tip_skillNormal: "ゲーム内のスキル詳細画面に記載されている、通常攻撃「フレーバー変奏」の1〜4段目のヒット倍率％を入力します。",
-        tip_skillNormal5: "通常攻撃コンボの締めくくりである5段目の本体ヒット倍率％を入力します。これが当たると同時に悪夢の清算バーストが発動します。",
-        tip_skillBarel: "スキル詳細に記載されている、バイレールスキル「悪魔のプレゼント（コピー技術の撃ち出し）」の倍率％を入力します。",
-        tip_skillExMelee: "近接戦闘モード時に発動する、必殺技「EXレール終結」の合計ダメージ倍率％を入力します。",
-        tip_skillExRange: "遠距離ガンナーモード時に発動する、必殺技「EXレール終結」の合計ダメージ倍率％を入力します。",
+        tip_skillNormal: "スキル詳細画面に記載されている、通常攻撃「フレーバー変奏」の1〜4段目のヒット倍率％を入力します。",
+        tip_skillNormal5: "通常コンボの締めくくりである5段目の本体ヒット倍率％を入力します。ヒット時に悪夢の清算が発動します。",
+        tip_skillBarel: "スキル詳細に記載されている、バイレールスキル「悪魔のプレゼント（コピー技術の撃ち出し）」の倍率％です。",
+        tip_skillExMelee: "近接戦闘モード時に発動する、必殺技（終結技）「EXレール終結」の合計ダメージ倍率％を入力します。",
+        tip_skillExRange: "遠距離ガンナーモード時に発動する、必殺技（終結技）「EXレール終結」の合計ダメージ倍率％を入力します。",
         tip_skillNightmare: "敵に付与される固有デバフ「悪夢」の、1スタックあたりが毎秒与える闇異能継続ダメージの倍率％を入力します。",
-        tip_nightmareStacks: "通常5段目を当てて清算バーストを起こす際、敵から一気に消費・回収する悪夢のスタック数（最大10）を指定します。",
-        tip_nightmareClearPop: "凸効果やスキル仕様で規定されている、5段目ヒット時に悪夢スタックを大爆発させる際の乗算倍率（〇秒分のDoT一括吐き出しなど）を入力します。",
+        tip_nightmareStacks: "通常5段目を当てて清算バーストを起こす際、敵から一気に消費・回収する悪夢のスタック数（最大10）です。",
+        tip_nightmareClearPop: "凸効果やスキル仕様で規定されている、5段目ヒット時に悪夢スタックを一括大爆発させる際の乗算倍率です。",
 
         defs: [
             "<strong>D<sub>nm</sub> / D<sub>burst</sub> / D<sub>normal5</sub> :</strong> 悪夢単発ダメージ / 総バーストダメージ / フレーバー変奏5段目本体ダメージ",
@@ -507,7 +600,7 @@ const i18nData = {
         res_burst: "🔥 风味变奏5段・噩梦清算总爆发:",
 
         tip_baseAtk: "请直接输入属性界面显示的“最终攻击力”。在这种情况下，下方的两个项目（%和固定值）请填 0。",
-        tip_atkPct: "由驱动（圣遗物）副属性等提供的攻击力%总和。如果在上方直接输入了最终攻击力，请填 0。",
+        tip_atkPct: "由驱动副属性等提供的攻击力%总和。如果在上方直接输入了最终攻击力，请填 0。",
         tip_flatAtk: "由驱动的主属性或副属性提供的固定攻击力数值。如果在上方直接输入了最终攻击力，请填 0。",
         tip_darkBuff: "请输入将面板详细属性中的“暗异能伤害强化(77.50%)”与“通用伤害强化(21.00%)”相加后的总值。",
         tip_critRate: "请输入面板上的“暴击率”（影响除噩梦持续伤害以外的本体攻击暴击概率）。",
@@ -518,13 +611,13 @@ const i18nData = {
         tip_enemyLv: "请输入设定的敌方目标（如测试首领等）的等级。",
         tip_defIgnore: "请输入满魂效果或其他附加增益提供的“无视敌方防御力”的总百分比。",
         tip_skillNormal: "请输入游戏内技能详情界面中记载的普通攻击“风味变奏”1〜4段的每段命中倍率%。",
-        tip_skillNormal5: "请输入普通攻击连段终结技第5段的本体命中倍率%。此攻击命中的同时会触发噩梦的清算爆发。",
+        tip_skillNormal5: "请输入普通攻击连段终和技第5段的本体命中倍率%。此攻击命中的同时会触发噩梦的清算爆发。",
         tip_skillBarel: "请输入技能详情中记载的拜轨技能“魔鬼的礼物（复制技能释放）”的伤害倍率%。",
         tip_skillExMelee: "请输入近战模式下释放的大招“EX轨终结”的总伤害倍率%。",
         tip_skillExRange: "请输入远距离模式下释放的大招“EX轨终结”的总伤害倍率%。",
         tip_skillNightmare: "请输入赋予敌方的固有负面状态“噩梦”每层每秒造成的暗异能持续伤害倍率%。",
         tip_nightmareStacks: "请指定在普通5段命中触发清算爆发时，从敌方身上一次性消耗和回收的噩梦层数（最大10层）。",
-        tip_nightmareClearPop: "请输入由魂之座（凸）效果或技能机制规定的，在5段命中时使噩梦层数发生大爆炸的乘算倍率（例如一次性结算等同于若干秒的DoT伤害）。",
+        tip_nightmareClearPop: "请输入由魂之座效果或技能机制规定的，在5段命中时使噩梦层数发生大爆炸的乘算倍率（例如结算等同于若干秒的DoT伤害）。",
 
         defs: [
             "<strong>D<sub>nm</sub> / D<sub>burst</sub> / D<sub>normal5</sub> :</strong> 噩梦单发伤害 / 总爆发伤害 / 风味变奏5段本体伤害",
@@ -533,7 +626,7 @@ const i18nData = {
             "<strong>B<sub>dark</sub> :</strong> 暗属性（暗异能）伤害加成%",
             "<strong>G<sub>gear</sub> :</strong> 驱动「迪亚波罗斯」带来的抗性忽视%（12% = 0.12 / 24% = 0.24）",
             "<strong>totalCD :</strong> 噩梦攻击的固定基础暴伤50% + 「最后的玫瑰」累积暴伤%的总和",
-            "<strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 真实等级 / 敌方等级 / 6魂提供的无视敌方防御力%",
+            "<strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 自身等级 / 敌方等级 / 6魂提供的无视敌方防御力%",
             "<strong>Stack / P<sub>clear</sub> :</strong> 噩梦消耗层数 / 5段噩梦清算（爆发）倍率",
             "<strong>2.0 :</strong> 对应6魂效果「噩梦伤害+100%」的独立最终乘算增益倍率"
         ]
@@ -561,8 +654,8 @@ const i18nData = {
         myLv: "Character Level (Your Level)",
         enemyLv: "Enemy Level",
         defIgnore: "C6 Effect: Enemy DEF Ignore (%)",
-        skillNormal: "Material Variation 1-4th Hit Multiplier (%)",
-        skillNormal5: "💥 Material Variation 5th Hit (Clear Trigger) (%)",
+        skillNormal: "‘Flavor Variation’ 1-4th Hit Multiplier (%)",
+        skillNormal5: "💥 ‘Flavor Variation’ 5th Hit (Clear Trigger) (%)",
         skillBarel: "Barel Skill 'Devil's Present' Multiplier (%)",
         skillExMelee: "🔮 EX Rail Culmination [Melee Mode] (%)",
         skillExRange: "🔮 EX Rail Culmination [Ranged Mode] (%)",
@@ -583,8 +676,8 @@ const i18nData = {
         res_nightmare: "Nightmare DoT (Per Sec Total at Specified Stacks):",
         res_burst: "🔥 Flavor Variation 5th Hit & Nightmare Clear Total Burst:",
 
-        tip_baseAtk: "Enter the 'Final ATK' value displayed on your status screen directly. In this case, set the two rows below (% and Flat) to 0.",
-        tip_atkPct: "Sum of ATK% bonuses from your Gear (Disk) sub-stats. If you entered Final ATK above, set this to 0.",
+        tip_baseAtk: "Enter the 'Final ATK' value displayed on your status screen directly. In this case, set the ATK% and Flat rows below to 0.",
+        tip_atkPct: "Sum of ATK% bonuses from your Gear disk sub-stats. If you entered Final ATK above, set this to 0.",
         tip_flatAtk: "Flat ATK value from Gear main or sub-stats. If you entered Final ATK above, set this to 0.",
         tip_darkBuff: "Enter the sum of 'Dark DMG Bonus (77.50%)' and 'Generic DMG Bonus (21.00%)' from your detailed status screen.",
         tip_critRate: "Enter the Crit Rate from your status screen (affects body attacks, not Nightmare DoT).",
@@ -592,7 +685,7 @@ const i18nData = {
         tip_roseCritDmg: "Enter the maximum total Crit DMG % that stacks from your signature weapon 'Last Rose' when Nightmare occurs or Barel Skill is cast.",
         tip_diabolosIgnore: "Select according to the set effect status of Gear 'Diabolos' 4pc. It ignores enemy elemental resistance and amplifies final damage.",
         tip_myLv: "Enter the current level of your Requiem. Used to calculate defense mitigation based on level difference.",
-        enemyLv: "Enter the level of the target enemy (such as target boss).",
+        tip_enemyLv: "Enter the level of the target enemy (such as target boss).",
         tip_defIgnore: "Enter the total % of 'Enemy DEF Ignore' from max duplicate or additional buffs.",
         tip_skillNormal: "Enter the multiplier % for hits 1-4 of the Normal Attack 'Flavor Variation' specified in your in-game skill details.",
         tip_skillNormal5: "Enter the multiplier % for the 5th hit of the Normal Attack combo. When it hits, it triggers the Nightmare Clear Burst simultaneously.",
@@ -625,7 +718,7 @@ function changeLanguage(lang) {
         const langSelect = document.getElementById('langSelect');
         if (langSelect) langSelect.value = lang;
 
-        // 安全なテキスト置換用関数（ガード付き）
+        // 安全なテキスト置換用関数
         const setTx = (id, text) => {
             const el = document.getElementById(id);
             if (el) el.innerText = text;
@@ -650,9 +743,11 @@ function changeLanguage(lang) {
 
         labels.forEach(id => {
             const lblEl = document.getElementById('lbl-' + id);
-            const inputEl = document.getElementById(id);
+            const tipEl = document.getElementById('tip-' + id);
+            
             if (lblEl && data[id]) lblEl.innerText = data[id];
-            if (inputEl && data['tip_' + id]) inputEl.setAttribute('title', data['tip_' + id]);
+            // 💡 改善の核心：ブラウザ機能に頼らず、HTMLのテキストとして確実に注釈ガイドを書き換える
+            if (tipEl && data['tip_' + id]) tipEl.innerText = data['tip_' + id];
         });
 
         setTx('opt-diabolos-12', data.diabolos_12);
@@ -767,7 +862,7 @@ function calculateDamage() {
     }
 }
 
-// 鉄板の即時実行（スクリプトが末尾にあるため、ロード完了と同時に確実に初期化を実行）
+// 読み込み完了と同時に、最も安全に日本語状態で初期起動
 changeLanguage('ja');
 </script>
 
