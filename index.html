@@ -382,6 +382,7 @@
 </div>
 
 <script>
+// 多言語翻訳データ辞書
 const i18nData = {
     ja: {
         title: "レクイエム（安魂曲）ダメージシミュレーター",
@@ -532,7 +533,7 @@ const i18nData = {
             "<strong>B<sub>dark</sub> :</strong> 暗属性（暗异能）伤害加成%",
             "<strong>G<sub>gear</sub> :</strong> 驱动「迪亚波罗斯」带来的抗性忽视%（12% = 0.12 / 24% = 0.24）",
             "<strong>totalCD :</strong> 噩梦攻击的固定基础暴伤50% + 「最后的玫瑰」累积暴伤%的总和",
-            "<strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 自身等级 / 敌方等级 / 6魂提供的无视敌方防御力%",
+            "<strong>Lv<sub>ply</sub> / Lv<sub>enm</sub> / I<sub>C6</sub> :</strong> 真实等级 / 敌方等级 / 6魂提供的无视敌方防御力%",
             "<strong>Stack / P<sub>clear</sub> :</strong> 噩梦消耗层数 / 5段噩梦清算（爆发）倍率",
             "<strong>2.0 :</strong> 对应6魂效果「噩梦伤害+100%」的独立最终乘算增益倍率"
         ]
@@ -560,12 +561,12 @@ const i18nData = {
         myLv: "Character Level (Your Level)",
         enemyLv: "Enemy Level",
         defIgnore: "C6 Effect: Enemy DEF Ignore (%)",
-        skillNormal: "‘Flavor Variation’ 1-4th Hit Multiplier (%)",
-        skillNormal5: "💥 ‘Flavor Variation’ 5th Hit (Clear Trigger) (%)",
-        skillBarel: "Barel Skill ‘Devil\'s Present’ Multiplier (%)",
+        skillNormal: "Material Variation 1-4th Hit Multiplier (%)",
+        skillNormal5: "💥 Material Variation 5th Hit (Clear Trigger) (%)",
+        skillBarel: "Barel Skill 'Devil's Present' Multiplier (%)",
         skillExMelee: "🔮 EX Rail Culmination [Melee Mode] (%)",
         skillExRange: "🔮 EX Rail Culmination [Ranged Mode] (%)",
-        skillNightmare: "‘Nightmare’ DoT 1-Stack Per Sec Multiplier (%)",
+        skillNightmare: "'Nightmare' DoT 1-Stack Per Sec Multiplier (%)",
         nightmareStacks: "💥 Nightmare Stacks Consumed on 5th Hit",
         nightmareClearPop: "💥 5th Hit Nightmare Clear (Burst) Ratio (x)",
         
@@ -576,7 +577,7 @@ const i18nData = {
         res_totalAtk: "Final Sheet ATK:",
         res_normal: "Flavor Variation 1-4th Hit (Single):",
         res_normal5: "Flavor Variation 5th Hit (Body Physical Only):",
-        res_barel: "Barel Skill ‘Devil\'s Present’:",
+        res_barel: "Barel Skill 'Devil's Present':",
         res_exmelee: "EX Rail Culmination [Melee Mode]:",
         res_exrange: "EX Rail Culmination [Ranged Mode]:",
         res_nightmare: "Nightmare DoT (Per Sec Total at Specified Stacks):",
@@ -591,7 +592,7 @@ const i18nData = {
         tip_roseCritDmg: "Enter the maximum total Crit DMG % that stacks from your signature weapon 'Last Rose' when Nightmare occurs or Barel Skill is cast.",
         tip_diabolosIgnore: "Select according to the set effect status of Gear 'Diabolos' 4pc. It ignores enemy elemental resistance and amplifies final damage.",
         tip_myLv: "Enter the current level of your Requiem. Used to calculate defense mitigation based on level difference.",
-        tip_enemyLv: "Enter the level of the target enemy (such as target boss).",
+        enemyLv: "Enter the level of the target enemy (such as target boss).",
         tip_defIgnore: "Enter the total % of 'Enemy DEF Ignore' from max duplicate or additional buffs.",
         tip_skillNormal: "Enter the multiplier % for hits 1-4 of the Normal Attack 'Flavor Variation' specified in your in-game skill details.",
         tip_skillNormal5: "Enter the multiplier % for the 5th hit of the Normal Attack combo. When it hits, it triggers the Nightmare Clear Burst simultaneously.",
@@ -617,77 +618,158 @@ const i18nData = {
 };
 
 function changeLanguage(lang) {
-    const data = i18nData[lang];
-    if (!data) return;
+    try {
+        const data = i18nData[lang];
+        if (!data) return;
 
-    // セレクトボックス自体の見た目を選択言語に強制同期
-    document.getElementById('langSelect').value = lang;
+        const langSelect = document.getElementById('langSelect');
+        if (langSelect) langSelect.value = lang;
 
-    // タイトル関係
-    document.getElementById('txt-title').innerText = data.title;
-    document.getElementById('txt-subtitle').innerText = data.subtitle;
-    document.getElementById('txt-card-status').innerText = data.card_status;
-    document.getElementById('txt-card-skill').innerText = data.card_skill;
-    document.getElementById('txt-card-result').innerText = data.card_result;
-    document.getElementById('txt-formula-title').innerText = data.formula_title;
-    document.getElementById('txt-formula-1').innerText = data.formula_1;
-    document.getElementById('txt-formula-2').innerText = data.formula_2;
-    document.getElementById('txt-def-title').innerText = data.def_title;
-    document.getElementById('btn-calc').innerText = data.btn_calc;
+        // 安全なテキスト置換用関数（ガード付き）
+        const setTx = (id, text) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = text;
+        };
 
-    // フォームラベルとツールチップ
-    const labels = [
-        'baseAtk', 'atkPct', 'flatAtk', 'darkBuff', 'critRate', 'critDmg', 'roseCritDmg',
-        'diabolosIgnore', 'myLv', 'enemyLv', 'defIgnore', 'skillNormal', 'skillNormal5',
-        'skillBarel', 'skillExMelee', 'skillExRange', 'skillNightmare', 'nightmareStacks', 'nightmareClearPop'
-    ];
+        setTx('txt-title', data.title);
+        setTx('txt-subtitle', data.subtitle);
+        setTx('txt-card-status', data.card_status);
+        setTx('txt-card-skill', data.card_skill);
+        setTx('txt-card-result', data.card_result);
+        setTx('txt-formula-title', data.formula_title);
+        setTx('txt-formula-1', data.formula_1);
+        setTx('txt-formula-2', data.formula_2);
+        setTx('txt-def-title', data.def_title);
+        setTx('btn-calc', data.btn_calc);
 
-    labels.forEach(id => {
-        const lblEl = document.getElementById('lbl-' + id);
-        const inputEl = document.getElementById(id);
-        if (lblEl) lblEl.innerText = data[id];
-        if (inputEl) inputEl.setAttribute('title', data['tip_' + id]);
-    });
+        const labels = [
+            'baseAtk', 'atkPct', 'flatAtk', 'darkBuff', 'critRate', 'critDmg', 'roseCritDmg',
+            'diabolosIgnore', 'myLv', 'enemyLv', 'defIgnore', 'skillNormal', 'skillNormal5',
+            'skillBarel', 'skillExMelee', 'skillExRange', 'skillNightmare', 'nightmareStacks', 'nightmareClearPop'
+        ];
 
-    // プルダウン項目
-    document.getElementById('opt-diabolos-12').innerText = data.diabolos_12;
-    document.getElementById('opt-diabolos-24').innerText = data.diabolos_24;
-    document.getElementById('opt-diabolos-0').innerText = data.diabolos_0;
+        labels.forEach(id => {
+            const lblEl = document.getElementById('lbl-' + id);
+            const inputEl = document.getElementById(id);
+            if (lblEl && data[id]) lblEl.innerText = data[id];
+            if (inputEl && data['tip_' + id]) inputEl.setAttribute('title', data['tip_' + id]);
+        });
 
-    // 結果ラベル
-    document.getElementById('res-lbl-totalAtk').innerText = data.res_totalAtk;
-    document.getElementById('res-lbl-normal').innerText = data.res_normal;
-    document.getElementById('res-lbl-normal5').innerText = data.res_normal5;
-    document.getElementById('res-lbl-barel').innerText = data.res_barel;
-    document.getElementById('res-lbl-exmelee').innerText = data.res_exmelee;
-    document.getElementById('res-lbl-exrange').innerText = data.res_exrange;
-    document.getElementById('res-lbl-nightmare').innerText = data.res_nightmare;
-    document.getElementById('res-lbl-burst').innerText = data.res_burst;
+        setTx('opt-diabolos-12', data.diabolos_12);
+        setTx('opt-diabolos-24', data.diabolos_24);
+        setTx('opt-diabolos-0', data.diabolos_0);
 
-    // 代数定義リスト生成
-    const listEl = document.getElementById('list-definitions');
-    listEl.innerHTML = '';
-    data.defs.forEach(defText => {
-        const li = document.createElement('li');
-        li.innerHTML = defText;
-        listEl.appendChild(li);
-    });
+        setTx('res-lbl-totalAtk', data.res_totalAtk);
+        setTx('res-lbl-normal', data.res_normal);
+        setTx('res-lbl-normal5', data.res_normal5);
+        setTx('res-lbl-barel', data.res_barel);
+        setTx('res-lbl-exmelee', data.res_exmelee);
+        setTx('res-lbl-exrange', data.res_exrange);
+        setTx('res-lbl-nightmare', data.res_nightmare);
+        setTx('res-lbl-burst', data.res_burst);
 
-    // ダメージの再計算
-    calculateDamage();
+        const listEl = document.getElementById('list-definitions');
+        if (listEl && data.defs) {
+            listEl.innerHTML = '';
+            data.defs.forEach(defText => {
+                const li = document.createElement('li');
+                li.innerHTML = defText;
+                listEl.appendChild(li);
+            });
+        }
+
+        calculateDamage();
+    } catch (e) {
+        console.error("Error in changeLanguage:", e);
+    }
 }
 
 function calculateDamage() {
-    const baseAtk = parseFloat(document.getElementById('baseAtk').value) || 0;
-    const atkPct = parseFloat(document.getElementById('atkPct').value) || 0;
-    const flatAtk = parseFloat(document.getElementById('flatAtk').value) || 0;
-    const darkBuff = parseFloat(document.getElementById('darkBuff').value) || 0;
-    const critRate = parseFloat(document.getElementById('critRate').value) || 0;
-    const critDmg = parseFloat(document.getElementById('critDmg').value) || 0;
-    const roseCritDmg = parseFloat(document.getElementById('roseCritDmg').value) || 0;
-    const diabolosIgnore = parseFloat(document.getElementById('diabolosIgnore').value) || 0;
-    const myLv = parseFloat(document.getElementById('myLv').value) || 0;
-    const enemyLv = parseFloat(document.getElementById('enemyLv').value) || 0;
-    const defIgnore = parseFloat(document.getElementById('defIgnore').value) || 0;
+    try {
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            return el ? parseFloat(el.value) || 0 : 0;
+        };
 
-    const sNormal = parseFloat(
+        const baseAtk = getVal('baseAtk');
+        const atkPct = getVal('atkPct');
+        const flatAtk = getVal('flatAtk');
+        const darkBuff = getVal('darkBuff');
+        const critRate = getVal('critRate');
+        const critDmg = getVal('critDmg');
+        const roseCritDmg = getVal('roseCritDmg');
+        
+        const diabEl = document.getElementById('diabolosIgnore');
+        const diabolosIgnore = diabEl ? parseFloat(diabEl.value) || 0 : 0;
+        
+        const myLv = getVal('myLv');
+        const enemyLv = getVal('enemyLv');
+        const defIgnore = getVal('defIgnore');
+
+        const sNormal = getVal('skillNormal');
+        const sNormal5 = getVal('skillNormal5');
+        const sBarel = getVal('skillBarel');
+        const sExMelee = getVal('skillExMelee');
+        const sExRange = getVal('skillExRange');
+        const sNightmare = getVal('skillNightmare');
+        const nightmareStacks = getVal('nightmareStacks');
+        const nClearPop = getVal('nightmareClearPop');
+
+        const totalAtk = (baseAtk * (1 + atkPct / 100)) + flatAtk;
+        
+        const resTotalAtkEl = document.getElementById('resTotalAtk');
+        if (resTotalAtkEl) resTotalAtkEl.innerText = Math.floor(totalAtk).toLocaleString();
+
+        const darkMod = 1 + (darkBuff / 100);
+        const gearMod = 1 + (diabolosIgnore / 100); 
+
+        const myFactor = myLv + 100;
+        const enemyFactor = (enemyLv + 100) * (1 - defIgnore / 100);
+        const defMitigation = myFactor / (myFactor + enemyFactor);
+
+        const totalBodyCritDmg = critDmg + roseCritDmg;
+        const bodyCritMod = 1 + ((Math.min(critRate, 100) / 100) * (totalBodyCritDmg / 100));
+
+        const totalNightmareCritDmg = 50 + roseCritDmg;
+        const nightmareCritMod = 1 + (0.50 * (totalNightmareCritDmg / 100));
+
+        const dmgNormal = totalAtk * (sNormal / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
+        const dmgNormal5 = totalAtk * (sNormal5 / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
+        const dmgBarel = totalAtk * (sBarel / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
+        const dmgExMelee = totalAtk * (sExMelee / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
+        const dmgExRange = totalAtk * (sExRange / 100) * darkMod * gearMod * bodyCritMod * defMitigation;
+        
+        const dmgNightmare1Stack = totalAtk * (sNightmare / 100) * darkMod * gearMod * nightmareCritMod * defMitigation;
+        const totalNightmareDoT = dmgNightmare1Stack * nightmareStacks;
+
+        const dmgClearBurst = (dmgNightmare1Stack * 2.0) * nightmareStacks * nClearPop;
+        const totalBurstCombo = dmgNormal5 + dmgClearBurst;
+
+        const langEl = document.getElementById('langSelect');
+        const currentLang = langEl ? langEl.value : 'ja';
+        let avgSuffix = currentLang === 'en' ? ' (Avg)' : ' (平均)';
+        let secSuffix = currentLang === 'en' ? ' /s' : ' /秒';
+
+        const setRes = (id, val, suf) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = Math.floor(val).toLocaleString() + suf;
+        };
+
+        setRes('resNormal', dmgNormal, avgSuffix);
+        setRes('resNormal5', dmgNormal5, avgSuffix);
+        setRes('resBarel', dmgBarel, avgSuffix);
+        setRes('resExMelee', dmgExMelee, avgSuffix);
+        setRes('resExRange', dmgExRange, avgSuffix);
+        setRes('resNightmareTotal', totalNightmareDoT, secSuffix);
+        setRes('resTotalBurst', totalBurstCombo, '');
+    } catch (e) {
+        console.error("Error in calculateDamage:", e);
+    }
+}
+
+// 鉄板の即時実行（スクリプトが末尾にあるため、ロード完了と同時に確実に初期化を実行）
+changeLanguage('ja');
+</script>
+
+</body>
+</html>
